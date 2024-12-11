@@ -1,0 +1,3 @@
+Notes
+
+Perheart: BPM and HR (either one or the other, or none)

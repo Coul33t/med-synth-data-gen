@@ -8,7 +8,6 @@ import os
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-
 class Dataset:
     def __init__(self, name='none', path='None', id_col_name='None', date_format='%Y-%m-%d %H:%M:%S', date_time_col='NOT SET'):
         self.name = name
@@ -22,7 +21,6 @@ class Dataset:
 
     def load(self):
         self.df = pd.read_excel(self.path)
-        breakpoint()
 
     def split(self):
         self.splitted_dfs = [d for _, d in self.df.groupby([self.id_col_name])]
@@ -39,11 +37,17 @@ class Dataset:
         for i, df in enumerate(self.splitted_dfs):
             self.splitted_dfs[i] = df.sort_values(by=self.date_time_col)
 
+    def get_mean_deltatime(self, deltatime_col):
+        return sum(deltatime_col, dt.timedelta(0)) / len(deltatime_col)
+
     def get_stats(self):
         self.infos['nb_patients'] = len(self.splitted_dfs)
         self.infos['data_per_patients'] = [len(x) for x in self.splitted_dfs]
         self.infos['mean_data_per_patients'] = statistics.mean(self.infos['data_per_patients'])
         self.infos['std_data_per_patients'] = statistics.stdev(self.infos['data_per_patients'])
+        self.infos['mean_time_diff'] = pd.DataFrame([x['time_diff'].mean() for x in self.splitted_dfs]).mean()
+        self.infos['std_time_diff'] = pd.DataFrame([x['time_diff'].std() for x in self.splitted_dfs]).std()
+        self.infos['median_time_diff'] = pd.DataFrame([x['time_diff'].median() for x in self.splitted_dfs]).median()
 
     def compute_timestep_info(self):
         for df in self.splitted_dfs:
@@ -56,8 +60,8 @@ class Dataset:
         self.split()
         self.format_str_to_datetime()
         self.order()
-        self.get_stats()
         self.compute_timestep_info()
+        self.get_stats()
 
 
     def __repr__(self):
@@ -67,6 +71,7 @@ class Dataset:
         ret_str  = f'Dataset {self.name}\n'
         ret_str += f'{self.infos["nb_patients"]} patients\n'
         ret_str += f'{self.infos["mean_data_per_patients"]} average data per patients (std = {self.infos["std_data_per_patients"]})\n'
+        ret_str += f'Timestep mean/std/median: {self.infos["mean_time_diff"]}/{self.infos["std_time_diff"]}/{self.infos["median_time_diff"]}\n'
         return  ret_str
 
 
@@ -81,7 +86,8 @@ class Patient():
 
     def add_attrs(self, attrs, prefix=''):
         for key in attrs:
-                setattr(self, prefix + key, attrs[key])
+            new_key = key.replace('.', '_')
+            setattr(self, prefix + new_key, attrs[key])
 
 
 
@@ -92,6 +98,7 @@ class MultifilesDataset():
         self.raw_dfs = []
         self.dfs = []
         self.patients = []
+        self.infos = {}
 
     def load(self):
         files = [f for f in os.listdir(self.path) if os.path.isfile(os.path.join(self.path, f))]
@@ -136,8 +143,38 @@ class MultifilesDataset():
             if patient is not None:
                 patient.add_attrs(row, 'brushing_responses_')
 
+    def get_stats(self):
+        self.infos['nb_patients'] = len(self.patients)
+        self.infos['max_data_per_patients'] = []
+        self.infos['min_data_per_patients'] = []
+        
+        for patient in self.patients:
+            all_attr = patient.__dict__
+            all_lengths = []
+            for key, value in all_attr.items():
+                if 'brushing' not in key:
+                    try:
+                        all_lengths.append(len(value))
+                    except:
+                        pass
 
+            self.infos['max_data_per_patients'].append(min(all_lengths))
+            self.infos['min_data_per_patients'].append(max(all_lengths))
 
+        #self.infos['data_per_patients'] = [(self.infos['max_data_per_patients'][i] + self.infos['min_data_per_patients'][i]) / 2 for i in range(self.infos['nb_patients'])]
+        self.infos['data_per_patients'] = self.infos['max_data_per_patients']
+        self.infos['mean_data_per_patients'] = statistics.mean(self.infos['data_per_patients'])
+        self.infos['std_data_per_patients'] = statistics.stdev(self.infos['data_per_patients'])
+
+    def compute_timestep_info(self):
+        for df in self.splitted_dfs:
+            df['time_diff'] = df[self.date_time_col].diff()
+
+    def init(self):
+        self.load()
+        self.create_patients()
+        self.associate_data()
+        self.get_stats()
 
 
 
@@ -152,8 +189,14 @@ def box_plot_df(*dfs):
     fig, ax = plt.subplots()
     ax.boxplot(data.values(), showfliers=False)
     ax.set_xticklabels(data.keys())
-    ax.set_title("Data per patient")
+    ax.set_title("Data per patient (without fliers)")
     print(f'Outliers: {fliers}')
+
+    fig2, ax2 = plt.subplots()
+    ax2.boxplot(data.values())
+    ax2.set_xticklabels(data.keys())
+    ax2.set_title("Data per patient")
+
     plt.show()
 
 def plot_time_diff(dfs):
@@ -166,31 +209,54 @@ def plot_time_diff(dfs):
 def all_datasets():
     oana_dataset = Dataset('Oana', 'datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
     oana_dataset.init()
-    plot_time_diff(oana_dataset.splitted_dfs)
+    #plot_time_diff(oana_dataset.splitted_dfs)
     
     incare_dataset = Dataset('Incare', 'datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
     incare_dataset.init()
-    plot_time_diff(incare_dataset.splitted_dfs)
+    #plot_time_diff(incare_dataset.splitted_dfs)
 
-    perheart_dataset = Dataset('Perheart', 'datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='', date_time_col='Date_reformated')
+    perheart_dataset = Dataset('Perheart', 'datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
+    perheart_dataset.init()
+    #plot_time_diff(perheart_dataset.splitted_dfs)
+
+    print(oana_dataset)
+    print(incare_dataset)
+    print(perheart_dataset)
+
+    #box_plot_df(oana_dataset, incare_dataset, perheart_dataset)
+
+
+def complex_dataset():
+    aceso_dataset = MultifilesDataset('ACESO', 'datasets/ACESO/')
+    aceso_dataset.init()
+
+def all_of_them():
+    oana_dataset = Dataset('Oana', 'datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
+    oana_dataset.init()
+    
+    incare_dataset = Dataset('Incare', 'datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
+    incare_dataset.init()
+
+    perheart_dataset = Dataset('Perheart', 'datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
     perheart_dataset.init()
 
     print(oana_dataset)
     print(incare_dataset)
     print(perheart_dataset)
 
-    box_plot_df(oana_dataset, incare_dataset, perheart_dataset)
-
-
-def complex_dataset():
+    breakpoint()
     aceso_dataset = MultifilesDataset('ACESO', 'datasets/ACESO/')
-    aceso_dataset.load()
-    aceso_dataset.create_patients()
-    aceso_dataset.associate_data()
+    aceso_dataset.init()
+
+    
+
+    box_plot_df(oana_dataset, incare_dataset, perheart_dataset, aceso_dataset)
+
 
 def main():
-    all_datasets()
+    #all_datasets()
     #complex_dataset()
+    all_of_them()
 
 if __name__ == '__main__':
     main()

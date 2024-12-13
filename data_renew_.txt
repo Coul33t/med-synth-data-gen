@@ -6,10 +6,11 @@ pulse -> BPM : batements par minute (int)
 arrythmia -> arrhythmia : troubles du rythme cardiaque (booléen)
 weight : poids (float)
 SpO2 : saturation en oxygène dans le sang (int)
+PI : perfusion index
 
 
 Données manquantes (aléatoire)
 
 Date :
 Données pas rangées dans l'ordre
-à peu près 24h entre chaque relevé
+à peu près 24h entre chaque relevé, mais gaps

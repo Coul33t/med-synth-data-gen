@@ -8,6 +8,7 @@ import os
 
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
 class Dataset:
     def __init__(self, name='none', path='None', id_col_name='None', date_format='%Y-%m-%d %H:%M:%S', date_time_col='NOT SET'):
         self.name = name
@@ -207,15 +208,15 @@ def plot_time_diff(dfs):
     plt.show()
 
 def all_datasets():
-    oana_dataset = Dataset('Oana', 'datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
+    oana_dataset = Dataset('Oana', '../datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
     oana_dataset.init()
     #plot_time_diff(oana_dataset.splitted_dfs)
     
-    incare_dataset = Dataset('Incare', 'datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
+    incare_dataset = Dataset('Incare', '../datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
     incare_dataset.init()
     #plot_time_diff(incare_dataset.splitted_dfs)
 
-    perheart_dataset = Dataset('Perheart', 'datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
+    perheart_dataset = Dataset('Perheart', '../datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
     perheart_dataset.init()
     #plot_time_diff(perheart_dataset.splitted_dfs)
 
@@ -227,17 +228,17 @@ def all_datasets():
 
 
 def complex_dataset():
-    aceso_dataset = MultifilesDataset('ACESO', 'datasets/ACESO/')
+    aceso_dataset = MultifilesDataset('ACESO', '../datasets/ACESO/')
     aceso_dataset.init()
 
 def all_of_them():
-    oana_dataset = Dataset('Oana', 'datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
+    oana_dataset = Dataset('Oana', '../datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
     oana_dataset.init()
     
-    incare_dataset = Dataset('Incare', 'datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
+    incare_dataset = Dataset('Incare', '../datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
     incare_dataset.init()
 
-    perheart_dataset = Dataset('Perheart', 'datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
+    perheart_dataset = Dataset('Perheart', '../datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
     perheart_dataset.init()
 
     print(oana_dataset)
@@ -245,7 +246,7 @@ def all_of_them():
     print(perheart_dataset)
 
     breakpoint()
-    aceso_dataset = MultifilesDataset('ACESO', 'datasets/ACESO/')
+    aceso_dataset = MultifilesDataset('ACESO', '../datasets/ACESO/')
     aceso_dataset.init()
 
     

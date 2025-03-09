@@ -1,0 +1,16 @@
+notes meeting with Tibi
+
+- https://jmai.amegroups.org/article/view/9165/html
+ 
+- https://academic.oup.com/ndt/article/38/Supplement_1/gfad063c_5490/7195484
+ 
+- SDV
+
+Other metrics
+- https://figshare.com/articles/dataset/General_and_top-30_important_characteristics_of_the_participants_according_to_hypertension_after_5_years_of_follow-up_Total_number_of_participants_2288_/25409350?file=45040645
+
+Add age (currently set to 60 as a baseline value) -> later, should find studies with informations 
+
+Describe what do we want (i.e. "we want this data in the end")
+What do we do with the data (i.e. how do we generate it)
+Talk about SDV and what we will add in it later (age, weight, etc. -> add indicators from the literature)

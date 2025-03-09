@@ -1,0 +1,5 @@
+- Generate synthetic data from database (using synthpop? Must be timeseries data)
+- In generated data, add a column for medication
+- Randomly set a few (consecuting) rows to 1 (= is taking medication)
+- For next BP values, lowers it by the value defined for the medication (wait for time elapsed > time to kick in (between 2 and 4 weeks))
+- When it stops, stop this lowering after XX weeks (between 2 and 4)

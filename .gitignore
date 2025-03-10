@@ -1,1 +1,2 @@
 datasets/
+data_gen/split_data/*.csv

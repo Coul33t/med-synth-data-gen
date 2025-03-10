@@ -13,7 +13,7 @@ def main():
     dfs = sort_by_date(dfs)
 
     for df in dfs:
-        df.to_csv(f'split_data/patient_{df.iloc[0]["pacient_id"]}.csv')
+        df.to_csv(f'split_data/patient_{df.iloc[0]["pacient_id"]}.csv', index=False)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,5 @@
+SBP = Systolic Blood Pressure
+DBP = Diastolic Blood Pressure
+CL = Control Limit -> x3 STD
+UCL = Upper Control Limit
+LCL = Lower Control Limit

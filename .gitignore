@@ -1,2 +1,3 @@
 datasets/
 data_gen/split_data/*.csv
+data/gen/extended_data/*.csv

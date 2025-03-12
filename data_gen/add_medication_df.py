@@ -1,5 +1,4 @@
-import os
-import glob
+import sys
 import random as rn
 from typing import List
 
@@ -39,11 +38,13 @@ def get_next_value(val: float, lower_bound: float, upper_bound: float) -> float:
         return val
     return next_val
 
-def add_medication(patient: pd.DataFrame, med: pd.DataFrame):
+def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str):
     nb_row = len(patient)
     # Totally arbitrary values
     med_start = rn.randint(2, int(nb_row / 5))
     med_end = rn.randint(med_start + int(nb_row / 5), med_start + int(nb_row / 1.5))
+
+    med = med_list.loc[med_list['medication'] == med_name]
 
     # See https://numpy.org/doc/stable/reference/random/generated/numpy.random.triangular.html
     value_SBP = rn.triangular(med['LCL_SBP'].item(), med['UCL_SBP'].item(), med['SBP'].item())
@@ -74,11 +75,23 @@ def add_medication(patient: pd.DataFrame, med: pd.DataFrame):
     plt.show()
 
 
-def main():
-    med_list = import_medication("medication.csv")
-    patient = import_patient("split_data/patient_2.csv")
-    breakpoint()
-    add_medication(patient, med_list.iloc[[0]])
+def main(args):
+    med_list_path = 'medication'
+    patient_path = 'syn_data/gen_data/patient_1208717_syn'
+    medication_name = 'DIU'
+
+    if len(args) > 2:
+        med_list_path = args[1]
+        patient_path = args[2]
+
+    if len(args) > 3:
+        medication_name = args[3]
+
+        
+    med_list = import_medication(f'{med_list_path}.csv')
+    patient = import_patient(f'{patient_path}.csv')
+
+    add_medication(patient, med_list, medication_name)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)

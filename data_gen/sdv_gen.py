@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 
 from sdv.metadata import Metadata
@@ -9,44 +11,49 @@ def import_data(filename: str) -> pd.DataFrame:
     return  pd.read_csv(filename)
 
 def import_or_create_metadata(data, filename: str):
-    # load metadata if it exists
-    try:
-        metadata = Metadata()
-        metadata.load_from_json(filename)
-        return metadata
 
-    except Exception as ex:
-        metadata = Metadata.detect_from_dataframe(data)
+    metadata = Metadata.detect_from_dataframe(data)
 
-        metadata.update_column(column_name='pacient_id', sdtype='id')
-        metadata.update_column(column_name='SpO2', sdtype='numerical')
-        metadata.set_sequence_key('pacient_id')
+    metadata.update_column(column_name='pacient_id', sdtype='id')
+    metadata.update_column(column_name='SpO2', sdtype='numerical')
+    metadata.set_sequence_key('pacient_id')
 
-        metadata.save_to_json(filepath=filename)
-        return metadata
+    return metadata
 
 
-def fit_synthetizer(data, metadata, save: bool = True):
+def fit_synthetizer(data, metadata, filename, save: bool = True):
     synthetizer = PARSynthesizer(metadata)
     synthetizer.fit(data)
 
-    synthetizer.save(filepath='my_synthesizer.pkl')
+    synthetizer.save(filepath=f'model/{filename}_synthesizer.pkl')
 
     return synthetizer
 
-def synthetize(synthetizer):
+def synthetize(synthetizer, filename: str):
     synthetic_data = synthetizer.sample(num_sequences=100)
-    synthetic_data.to_csv('syn_data.csv', index=False)
+    synthetic_data.to_csv(f'syn_data/{filename}_syn_data.csv', index=False)
 
-def main():
+def main(args):
+    filename = 'data_renew_cleaned'
+    metadata_name = 'renew_metadata'
+    
+    if len(args) > 1:
+        filename = args[1]
+
+    if len(args) > 2:
+        metadata_name = args[2]
+
     print('Importing data')
-    data = import_data('data_renew_cleaned.csv')
+    data = import_data(f'{filename}.csv')
+
     print('Creating metadata')
-    metadata = import_or_create_metadata(data, 'renew_metadata.json')
+    metadata = import_or_create_metadata(data, f'{metadata_name}.json')
+
     print('Fitting synthetizer')
-    synthetizer = fit_synthetizer(data, metadata)
+    synthetizer = fit_synthetizer(data, metadata, filename)
+
     print('Synthetizing data')
-    synthetize(synthetizer)
+    synthetize(synthetizer, filename)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)

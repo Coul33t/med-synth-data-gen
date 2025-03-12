@@ -1,5 +1,5 @@
 datasets/
-data_gen/original_data/*.csv
+#data_gen/original_data/*.csv
 data_gen/cleaned_data/*.csv
 data_gen/split_data/*.csv
 data_gen/extended_data/*.csv

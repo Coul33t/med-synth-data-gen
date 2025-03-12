@@ -1,0 +1,36 @@
+{
+    "tables": {
+        "table": {
+            "columns": {
+                "Date_Time_measured": {
+                    "sdtype": "datetime",
+                    "datetime_format": "%Y-%m-%d %H:%M:%S %Z"
+                },
+                "pacient_id": {
+                    "sdtype": "id"
+                },
+                "sys BP": {
+                    "sdtype": "numerical"
+                },
+                "dia BP": {
+                    "sdtype": "numerical"
+                },
+                "pulse": {
+                    "sdtype": "numerical"
+                },
+                "arrythmia": {
+                    "sdtype": "categorical"
+                },
+                "weight": {
+                    "sdtype": "numerical"
+                },
+                "SpO2": {
+                    "sdtype": "numerical"
+                }
+            },
+            "sequence_key": "pacient_id"
+        }
+    },
+    "relationships": [],
+    "METADATA_SPEC_VERSION": "V1"
+}

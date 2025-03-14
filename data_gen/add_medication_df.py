@@ -52,8 +52,6 @@ def get_smooth_plot(data):
 
 
 def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str):
-    # TODO: kick in time (2 to 4 weeks)
-    # TODO: add medication column
     nb_row = len(patient)
 
     # Totally arbitrary values
@@ -82,18 +80,14 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
     kick_in_date = rn.randint(14, 28)
     kick_in_idx = med_start
 
-    print(f'Initial i: {med_start}')
-
+    # Find the actual start point of medication kick-in (between 14 and 28 days after the first dose)
     while (delta.days < kick_in_date):
         kick_in_idx += 1
         current_date = next_date
         next_date = datetime.fromisoformat(patient.loc[kick_in_idx + 1]['Date_Time_measured'][:-1])
         delta += next_date - current_date
 
-    print(f'Final i: {kick_in_idx}')
-
-
-
+    # Apply the BP reduction during this time
     for i in range(kick_in_idx, med_end):
         patient['sys BP'][i] -= value_SBP
         patient['dia BP'][i] -= value_DBP
@@ -101,6 +95,7 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
         value_SBP = get_next_value(value_SBP, med['LCL_SBP'].item(), med['UCL_SBP'].item(), 1)
         value_DBP = get_next_value(value_DBP, med['LCL_DBP'].item(), med['UCL_DBP'].item(), 1)
 
+    # TODO: maybe "kick-off" time?
     sbp_threshold = [140 for x in range(len(keep_ori_vals_SBP))]
     dbp_threshold = [90 for x in range(len(keep_ori_vals_DBP))]
 

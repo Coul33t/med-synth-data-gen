@@ -32,11 +32,16 @@ def import_medication(filename: str) -> pd.DataFrame:
 def import_patient(filename: str) -> List:
     return pd.read_csv(filename)
 
-def get_next_value(val: float, lower_bound: float, upper_bound: float) -> float:
+def get_next_value(val: float, lower_bound: float, upper_bound: float, rounded: int = -1) -> float:
     # See https://numpy.org/doc/stable/reference/random/generated/numpy.random.triangular.html
     next_val = rn.triangular(val - (val / 25), val + (val / 25), val)
+    
+    if rounded > 0:
+        next_val = round(next_val, rounded)
+
     if next_val < lower_bound or next_val > upper_bound:
         return val
+
     return next_val
 
 def get_smooth_plot(data):
@@ -63,8 +68,8 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
     # Take a random value in the interval [LCL;UCL], skewed towards the center
     # TODO: proper skewed Gaussian distribution
     # See https://numpy.org/doc/stable/reference/random/generated/numpy.random.triangular.html
-    value_SBP = rn.triangular(med['LCL_SBP'].item(), med['UCL_SBP'].item(), med['SBP'].item())
-    value_DBP = rn.triangular(med['LCL_DBP'].item(), med['UCL_DBP'].item(), med['DBP'].item())
+    value_SBP = round(rn.triangular(med['LCL_SBP'].item(), med['UCL_SBP'].item(), med['SBP'].item()), 1)
+    value_DBP = round(rn.triangular(med['LCL_DBP'].item(), med['UCL_DBP'].item(), med['DBP'].item()), 1)
 
     keep_ori_vals_SBP = patient['sys BP'].values.tolist()
     keep_ori_vals_DBP = patient['dia BP'].values.tolist()
@@ -93,8 +98,8 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
         patient['sys BP'][i] -= value_SBP
         patient['dia BP'][i] -= value_DBP
 
-        value_SBP = get_next_value(value_SBP, med['LCL_SBP'].item(), med['UCL_SBP'].item())
-        value_DBP = get_next_value(value_DBP, med['LCL_DBP'].item(), med['UCL_DBP'].item())
+        value_SBP = get_next_value(value_SBP, med['LCL_SBP'].item(), med['UCL_SBP'].item(), 1)
+        value_DBP = get_next_value(value_DBP, med['LCL_DBP'].item(), med['UCL_DBP'].item(), 1)
 
     sbp_threshold = [140 for x in range(len(keep_ori_vals_SBP))]
     dbp_threshold = [90 for x in range(len(keep_ori_vals_DBP))]
@@ -116,7 +121,7 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
 
     ax = plt.gca()
     ax.set_ylim([0, 200])
-    
+
     plt.legend()
     plt.show()
 

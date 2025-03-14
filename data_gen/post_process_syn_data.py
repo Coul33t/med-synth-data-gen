@@ -11,7 +11,7 @@ def separate_data(filename: str):
 def sort_by_date(dfs):
     return [df.sort_values(by='Date_Time_measured') for df in dfs]
 
-def average_weigth(dfs):
+def average_weight(dfs):
     new_dfs = []
 
     for df in dfs:
@@ -40,7 +40,7 @@ def main(args):
         
     dfs = separate_data(f'{filename}.csv')
     dfs = sort_by_date(dfs)
-    dfs = average_weigth(dfs)
+    dfs = average_weight(dfs)
     final_df = pd.concat(dfs)
     final_df.to_csv(f'{filename}_cleaned.csv', index=False)
 

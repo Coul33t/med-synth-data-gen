@@ -15,7 +15,7 @@ See the `requirements.txt` file
 | Matplotlib   | 3.5.1          |
 | SDV          | 1.18.0         |
 
-### Order (lol)
+### Scripts
 pre-requisites : 
     - Data CSV
     - Medication CSV
@@ -26,6 +26,9 @@ pre-requisites :
 4. Run the `add_medication_df.py` script  
 
 ### Optional & unused scripts
-`main.r`: used to generate synthetic data with the R `synthpop` package (using SDV for now)  
-`extend_data.py`: used to add a new boolean column indication if the patient has hypertension or not  
-`add_medication.py`: Not finished, used to add a medication  
+Optional:  
+* `extend_data.py`: used to add a new boolean column indication if the patient has hypertension or not 
+
+Unused:  
+* `main.r`: used to generate synthetic data with the R `synthpop` package (using SDV for now)  
+* `add_medication.py`: Not finished, used to add a medication  

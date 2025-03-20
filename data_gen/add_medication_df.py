@@ -59,7 +59,7 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
     med_end = rn.randint(med_start + int(nb_row / 5), med_start + int(nb_row / 1.5))
 
     taking_med_col = pd.Series([1 if (i > med_start and i < med_end) else 0 for i in range(len(patient))])
-    patient[med_name] = taking_med_col
+    patient[f'medication_{med_name}'] = taking_med_col
 
     med = med_list.loc[med_list['medication'] == med_name]
 

@@ -1,4 +1,5 @@
 import sys
+import math
 import random as rn
 from datetime import datetime
 from typing import List
@@ -55,8 +56,9 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
     nb_row = len(patient)
 
     # Totally arbitrary values
+    # End value is end of data (Jerzy's feedback)
     med_start = rn.randint(2, int(nb_row / 5))
-    med_end = rn.randint(med_start + int(nb_row / 5), med_start + int(nb_row / 1.5))
+    med_end = nb_row - 1
 
     taking_med_col = pd.Series([1 if (i > med_start and i < med_end) else 0 for i in range(len(patient))])
     patient[f'medication_{med_name}'] = taking_med_col
@@ -66,8 +68,8 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
     # Take a random value in the interval [LCL;UCL], skewed towards the center
     # TODO: proper skewed Gaussian distribution
     # See https://numpy.org/doc/stable/reference/random/generated/numpy.random.triangular.html
-    value_SBP = round(rn.triangular(med['LCL_SBP'].item(), med['UCL_SBP'].item(), med['SBP'].item()), 1)
-    value_DBP = round(rn.triangular(med['LCL_DBP'].item(), med['UCL_DBP'].item(), med['DBP'].item()), 1)
+    value_SBP = int(round(rn.triangular(med['LCL_SBP'].item(), med['UCL_SBP'].item(), med['SBP'].item()), 1))
+    value_DBP = int(round(rn.triangular(med['LCL_DBP'].item(), med['UCL_DBP'].item(), med['DBP'].item()), 1))
 
     keep_ori_vals_SBP = patient['sys BP'].values.tolist()
     keep_ori_vals_DBP = patient['dia BP'].values.tolist()
@@ -87,22 +89,38 @@ def add_medication(patient: pd.DataFrame, med_list: pd.DataFrame, med_name: str)
         next_date = datetime.fromisoformat(patient.loc[kick_in_idx + 1]['Date_Time_measured'][:-1])
         delta += next_date - current_date
 
+    dropped_medication = False
+    dropped_time = 0
+
     # Apply the BP reduction during this time
     for i in range(kick_in_idx, med_end):
-        patient['sys BP'][i] -= value_SBP
-        patient['dia BP'][i] -= value_DBP
+        # 5% to drop medication
+        if rn.random() > 0.8:
+            dropped_medication = True
+            dropped_time += 1
 
-        value_SBP = get_next_value(value_SBP, med['LCL_SBP'].item(), med['UCL_SBP'].item(), 1)
-        value_DBP = get_next_value(value_DBP, med['LCL_DBP'].item(), med['UCL_DBP'].item(), 1)
+        if dropped_medication:
+            # random value, intersects with 0 at x ~= 3
+            if rn.random() > (1 - math.log10(dropped_time)):
+                dropped_medication = False
+                dropped_time = 0
+
+            else:
+                patient[f'medication_{med_name}'][i] = 0
+                dropped_time += 1
+
+        else:
+            patient['sys BP'][i] -= value_SBP
+            patient['dia BP'][i] -= value_DBP
+
+            # No decimal values for BP (Jerzy's feedback)
+            value_SBP = int(round(get_next_value(value_SBP, med['LCL_SBP'].item(), med['UCL_SBP'].item(), 1)))
+            value_DBP = int(round(get_next_value(value_DBP, med['LCL_DBP'].item(), med['UCL_DBP'].item(), 1)))
 
     # TODO: maybe "kick-off" time?
     sbp_threshold = [140 for x in range(len(keep_ori_vals_SBP))]
     dbp_threshold = [90 for x in range(len(keep_ori_vals_DBP))]
 
-    #plt.plot(patient['sys BP'], label='Mod SBP')
-    #plt.plot(patient['dia BP'], label="Mod DBP")
-    #plt.plot(keep_ori_vals_SBP, label="Ori SBP")
-    #plt.plot(keep_ori_vals_DBP, label="Ori DBP")
     plt.plot(*get_smooth_plot(patient['sys BP']), label='Mod SBP')
     plt.plot(*get_smooth_plot(patient['dia BP']), label='Mod DBP')
     plt.plot(*get_smooth_plot(keep_ori_vals_SBP), label='Ori SBP')

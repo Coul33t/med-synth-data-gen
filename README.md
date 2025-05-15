@@ -32,3 +32,7 @@ Optional:
 Unused:  
 * `main.r`: used to generate synthetic data with the R `synthpop` package (using SDV for now)  
 * `add_medication.py`: Not finished, used to add a medication  
+
+### TODO
+odds of the values going towards uncontrolled values 
+1.04 -> it goes toward the higher risk of high pressure being uncontrolled

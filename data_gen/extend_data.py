@@ -1,7 +1,7 @@
 import pandas as pd
 
 def separate_data():
-    data = pd.read_csv('data_renew.csv')
+    data = pd.read_csv('data_1.csv')
     return [x for _, x in data.groupby(data['pacient_id'])]
    
    

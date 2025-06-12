@@ -1,6 +1,6 @@
-# RENEW
+# Synth data gen
 
-You'll need the datasets from the RENEW project, that you'll put in the `datasets` folder. Grab them [here](https://uncloud.univ-nantes.fr/index.php/s/SePD3YPPxFg2sbb)!
+You'll need a medical dataset for this project.
 
 ## Data generation
 The bulk of this repository is in the `data_gen` folder.
@@ -20,7 +20,7 @@ pre-requisites :
     - Data CSV
     - Medication CSV
 
-1. run the `clean_renew_data.py [optional data filename] [optional "group by" column name] [optional "sort by" column name]` script on the original data. This will create a `{filename}_cleaned.csv` file.  
+1. run the `clean_data_1_data.py [optional data filename] [optional "group by" column name] [optional "sort by" column name]` script on the original data. This will create a `{filename}_cleaned.csv` file.  
 2. run the `sdv_gen.py [optional data filename] [optional metadata file name]` script. This will create a `{filename}_syn_data.csv` file, and also save the metadata and the trained model.  
 3. Run the `post_process_syn_data.py [optional data filename]` script. This will smoothen the weights values with a sliding mean.  
 4. Run the `add_medication_df.py` script  

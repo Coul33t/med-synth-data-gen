@@ -34,8 +34,8 @@ def synthetize(synthetizer, filename: str):
     synthetic_data.to_csv(f'syn_data/{filename}_syn_data.csv', index=False)
 
 def main(args):
-    filename = 'data_renew_cleaned'
-    metadata_name = 'renew_metadata'
+    filename = 'data_data_1_cleaned'
+    metadata_name = 'data_1_metadata'
     
     if len(args) > 1:
         filename = args[1]

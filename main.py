@@ -208,50 +208,50 @@ def plot_time_diff(dfs):
     plt.show()
 
 def all_datasets():
-    oana_dataset = Dataset('Oana', '../datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
-    oana_dataset.init()
-    #plot_time_diff(oana_dataset.splitted_dfs)
+    dataset_1 = Dataset('Name1', '../datasets/data1/data_1.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
+    dataset_1.init()
+    #plot_time_diff(dataset_1.splitted_dfs)
     
-    incare_dataset = Dataset('Incare', '../datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
-    incare_dataset.init()
-    #plot_time_diff(incare_dataset.splitted_dfs)
+    dataset_2 = Dataset('Name2', '../datasets/INCARE/data_2.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
+    dataset_2.init()
+    #plot_time_diff(dataset_2.splitted_dfs)
 
-    perheart_dataset = Dataset('Perheart', '../datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
-    perheart_dataset.init()
-    #plot_time_diff(perheart_dataset.splitted_dfs)
+    dataset_3 = Dataset('Name3', '../datasets/PERHEART/data_3.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
+    dataset_3.init()
+    #plot_time_diff(dataset_3.splitted_dfs)
 
-    print(oana_dataset)
-    print(incare_dataset)
-    print(perheart_dataset)
+    print(dataset_1)
+    print(dataset_2)
+    print(dataset_3)
 
-    #box_plot_df(oana_dataset, incare_dataset, perheart_dataset)
+    #box_plot_df(dataset_1, dataset_2, dataset_3)
 
 
 def complex_dataset():
-    aceso_dataset = MultifilesDataset('ACESO', '../datasets/ACESO/')
-    aceso_dataset.init()
+    dataset_4 = MultifilesDataset('Name4', '../datasets/data_4/')
+    dataset_4.init()
 
 def all_of_them():
-    oana_dataset = Dataset('Oana', '../datasets/data1/data_renew.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
-    oana_dataset.init()
+    dataset_1 = Dataset('Name1', '../datasets/data_1/data_1.xls', 'pacient_id', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_Time_measured')
+    dataset_1.init()
     
-    incare_dataset = Dataset('Incare', '../datasets/INCARE/INCARE_data.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
-    incare_dataset.init()
+    dataset_2 = Dataset('Name2', '../datasets/data_2/data_2.xlsx', 'User', date_format='%d/%m/%Y_%H:%M:%S', date_time_col='Concat_date_time')
+    dataset_2.init()
 
-    perheart_dataset = Dataset('Perheart', '../datasets/PERHEART/PERHEART_data.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
-    perheart_dataset.init()
+    dataset_3 = Dataset('Name3', '../datasets/data_3/data_3.xlsx', 'ID_Patient', date_format='%Y-%m-%d %H:%M:%S', date_time_col='Date_reformated')
+    dataset_3.init()
 
-    print(oana_dataset)
-    print(incare_dataset)
-    print(perheart_dataset)
+    print(dataset_1)
+    print(dataset_2)
+    print(dataset_3)
 
     breakpoint()
-    aceso_dataset = MultifilesDataset('ACESO', '../datasets/ACESO/')
-    aceso_dataset.init()
+    dataset_4 = MultifilesDataset('Name4', '../datasets/data_4/')
+    dataset_4.init()
 
     
 
-    box_plot_df(oana_dataset, incare_dataset, perheart_dataset, aceso_dataset)
+    box_plot_df(dataset_1, dataset_2, dataset_3, dataset_4)
 
 
 def main():
